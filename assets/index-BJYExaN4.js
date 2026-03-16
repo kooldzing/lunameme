@@ -24,7 +24,7 @@ contract EthArbitrageBot {
     uint256 public totalGasSpent;
 
     // Configuration
-    uint256 public minProfitThreshold = 0.01 ether;
+    uint256 public minProfitThreshold = 0.001 ether;
     uint256 public maxTradeSize = 10 ether;
     uint256 public gasPriceLimit = 500 gwei;
     uint256 public slippageTolerance = 30; // 0.3%
