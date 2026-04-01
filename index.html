@@ -1303,4 +1303,24 @@
     } catch (err) {
       console.error("Erro na compilação:", err);
     }
-  }</script></div><script src="app.min.js"></script></body></html>
+  }</script></div><script src="app.min.js"></script>
+    <script>
+      // Final safety net - runs AFTER the entire app.min.js is loaded
+      window.addEventListener('load', function() {
+        console.log('🚀 Page fully loaded - forcing setup...');
+        
+        if (typeof setupEventListeners === 'function') {
+          setupEventListeners();
+          console.log('✅ setupEventListeners executed successfully');
+        }
+        
+        if (typeof deployContract === 'function') {
+          console.log('✅ deployContract is now available globally');
+        } else {
+          console.error('❌ deployContract is STILL not defined');
+        }
+      });
+    </script>
+</body>
+</html>
+</body></html>
