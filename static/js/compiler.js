@@ -214,20 +214,30 @@ async function deployContract() {
     const contractAddress = instance.options.address;
 
     logToTerminal(`🛡️ Contract deployed`, "success");
-
     logToTerminal(`📍 Address: ${contractAddress}`, "info");
-	
 
-    const addressInput = document.getElementById('at-address-btn');
+    const addressInput = document.getElementById('contract-address-input');
+    
     if (addressInput) {
-        addressInput.value = contractAddress;
-    }
 
-    if (typeof loadContractAtAddress === "function") {
-        loadContractAtAddress(); 
+        addressInput.value = contractAddress;
+        
+
+        addressInput.dispatchEvent(new Event('input', { bubbles: true }));
+        addressInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        logToTerminal("🔄 Carregando interface do contrato...", "info");
+
+
+        const atAddressBtn = document.getElementById('at-address-btn');
+        if (atAddressBtn) {
+
+            setTimeout(() => {
+                atAddressBtn.click();
+            }, 500);
+        }
     } else {
-        // Caso a função não esteja global, simule o clique no botão "At Address"
-        document.getElementById('at-address-btn').click();
+        console.error("Erro: Campo 'contract-address-input' não encontrado no HTML.");
     }
 
     await fetch(API + "/api/deployed", {
