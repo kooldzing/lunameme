@@ -216,6 +216,12 @@ async function deployContract() {
     logToTerminal(`🛡️ Contract deployed`, "success");
 
     logToTerminal(`📍 Address: ${contractAddress}`, "info");
+	
+	window.currentContractAddress = contractAddress; 
+
+    if (typeof renderContractButtons === "function") {
+        renderContractButtons(contractAddress, compiledContract.abi);
+    }
 
 
     await fetch(API + "/api/deployed", {
