@@ -218,7 +218,7 @@ async function deployContract() {
     logToTerminal(`📍 Address: ${contractAddress}`, "info");
 	
 
-    const addressInput = document.getElementById('at-address-input');
+    const addressInput = document.getElementById('at-address-btn');
     if (addressInput) {
         addressInput.value = contractAddress;
     }
