@@ -295,7 +295,7 @@ async function connectToSpecificWallet(wallet) {
 			network: currentNetworkId
 		  })
 		});
-				});
+		
         logToTerminal(`${wallet.icon} Connected to ${wallet.name}: <code>${userAccount}</code>`, 'success');
         
         return true;
