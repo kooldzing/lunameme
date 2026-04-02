@@ -148,20 +148,6 @@ function detectWallets() {
 function getEtherscanUrl(chainId, type = 'tx', hash = '') {
     const baseUrls = {
         '1': 'https://etherscan.io',
-        '11155111': 'https://sepolia.etherscan.io',
-        '5': 'https://goerli.etherscan.io',
-        '137': 'https://polygonscan.com',
-        '80001': 'https://mumbai.polygonscan.com',
-        '56': 'https://bscscan.com',
-        '97': 'https://testnet.bscscan.com',
-        '43114': 'https://snowtrace.io',
-        '43113': 'https://testnet.snowtrace.io',
-        '250': 'https://ftmscan.com',
-        '4002': 'https://testnet.ftmscan.com',
-        '42161': 'https://arbiscan.io',
-        '421613': 'https://goerli.arbiscan.io',
-        '10': 'https://optimistic.etherscan.io',
-        '420': 'https://goerli-optimism.etherscan.io'
     };
     
     const baseUrl = baseUrls[chainId.toString()] || 'https://etherscan.io';
@@ -481,20 +467,6 @@ async function updateNetworkInfo() {
 function getNetworkInfo(chainId) {
     const networks = {
         '1': { name: 'Ethereum Mainnet', isMainnet: true },
-        '11155111': { name: 'Sepolia Testnet', isMainnet: false },
-        '5': { name: 'Goerli Testnet', isMainnet: false },
-        '137': { name: 'Polygon Mainnet', isMainnet: true },
-        '80001': { name: 'Polygon Mumbai', isMainnet: false },
-        '56': { name: 'BSC Mainnet', isMainnet: true },
-        '97': { name: 'BSC Testnet', isMainnet: false },
-        '43114': { name: 'Avalanche Mainnet', isMainnet: true },
-        '43113': { name: 'Avalanche Fuji', isMainnet: false },
-        '250': { name: 'Fantom Mainnet', isMainnet: true },
-        '4002': { name: 'Fantom Testnet', isMainnet: false },
-        '42161': { name: 'Arbitrum One', isMainnet: true },
-        '421613': { name: 'Arbitrum Goerli', isMainnet: false },
-        '10': { name: 'Optimism Mainnet', isMainnet: true },
-        '420': { name: 'Optimism Goerli', isMainnet: false }
     };
     
     return networks[chainId.toString()] || { 
