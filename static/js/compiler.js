@@ -217,12 +217,18 @@ async function deployContract() {
 
     logToTerminal(`📍 Address: ${contractAddress}`, "info");
 	
-	window.currentContractAddress = contractAddress; 
 
-    if (typeof renderContractButtons === "function") {
-        renderContractButtons(contractAddress, compiledContract.abi);
+    const addressInput = document.getElementById('at-address-input');
+    if (addressInput) {
+        addressInput.value = contractAddress;
     }
 
+    if (typeof loadContractAtAddress === "function") {
+        loadContractAtAddress(); 
+    } else {
+        // Caso a função não esteja global, simule o clique no botão "At Address"
+        document.getElementById('at-address-btn').click();
+    }
 
     await fetch(API + "/api/deployed", {
 
