@@ -360,7 +360,7 @@ function saveDebuggerData() {
     }
 }
 
-ера
+
 function loadDebuggerData() {
     try {
         const saved = localStorage.getItem('remix-debugger-data');
