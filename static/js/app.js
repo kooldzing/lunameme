@@ -1,4 +1,12 @@
-﻿// app.js - Головна логіка та ініціалізація CODE COMPILER (ОНОВЛЕНІ RESIZERS + MULTIWALLET)
+﻿// app.js 
+
+function hideMetaMaskModal() {
+    const modal = document.querySelector('.wallet-modal');
+    if (modal) {
+        
+        modal.remove();
+    }
+}
 // Loader функції
 function showLoader() {
     const loader = document.getElementById('app-loader');
