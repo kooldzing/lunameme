@@ -119,11 +119,18 @@ async function compileContract() {
 
     if (!result.success) {
 
-      console.error(result.details || result.error);
-      logToTerminal(result.error || "Compilation failed", "error");
+  console.error("FULL ERROR:", result);
 
-      return;
-    }
+  if (result.details) {
+    result.details.forEach(err => {
+      logToTerminal(err.formattedMessage, "error");
+    });
+  } else {
+    logToTerminal(result.error || "Compilation failed", "error");
+  }
+
+  return;
+  }
 
     compiledContract = result;
     currentContractABI = result.abi;
