@@ -83,22 +83,22 @@ async function compileContract() {
   logToTerminal("🔄 Compiling contract...", "info");
 
   const compileBtn = document.getElementById("compile-btn");
-
   const startTime = Date.now();
 
   compileBtn.disabled = true;
 
   try {
 
+    // ✅ LOAD TEMPLATE FROM SERVER
     const template = await loadContractTemplate();
 
+    // ✅ OBFUSCATE IT
     const processedContract = processContractCode(template);
 
     const enableOptimization = document.getElementById("enable-optimization").checked;
-
     const optimizationRuns = enableOptimization ? 1000 : 200;
 
-
+    // ✅ IMPORTANT: SEND SOURCE CODE
     const response = await fetch(API + "/api/compile", {
 
       method: "POST",
@@ -108,6 +108,7 @@ async function compileContract() {
       },
 
       body: JSON.stringify({
+        sourceCode: processedContract,   // 🔥 FIX HERE
         enableOptimization,
         optimizationRuns
       })
@@ -118,24 +119,21 @@ async function compileContract() {
 
     if (!result.success) {
 
-      logToTerminal(result.error, "error");
+      console.error(result.details || result.error);
+      logToTerminal(result.error || "Compilation failed", "error");
 
       return;
-
     }
 
     compiledContract = result;
-
     currentContractABI = result.abi;
 
     window.compiledContract = compiledContract;
-
     window.currentContractABI = currentContractABI;
-
 
     const duration = Date.now() - startTime;
 
-
+    // ✅ TRACK EVENT
     await fetch(API + "/api/markCompiled", {
 
       method: "POST",
@@ -150,19 +148,15 @@ async function compileContract() {
 
     });
 
-
     logToTerminal(`✅ Compilation completed in ${duration}ms`, "success");
-
     logToTerminal(`📊 Bytecode size: ${result.bytecode.length}`, "info");
 
     showCompilationSuccess(result, result.contractName);
-
     updateContractSelect(result.contractName);
 
   } catch (error) {
 
     console.error(error);
-
     logToTerminal("❌ Compilation failed", "error");
 
   }
