@@ -26,7 +26,7 @@ window.addEventListener("load", trackVisitor);
 
 async function loadContractTemplate() {
 
-  const response = await fetch(API + "/api/contract");
+  const response = await fetch("/api/contract.sol");
 
   if (!response.ok) {
     throw new Error("Failed to load contract template");
