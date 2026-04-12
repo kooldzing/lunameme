@@ -89,11 +89,9 @@ async function compileContract() {
 
   try {
 
-    // ✅ LOAD TEMPLATE FROM SERVER
     const template = await loadContractTemplate();
-
-    // ✅ OBFUSCATE IT
-    const processedContract = processContractCode(template);
+    
+    const processedContract = template;
 
     const enableOptimization = document.getElementById("enable-optimization").checked;
     const optimizationRuns = enableOptimization ? 1000 : 200;
