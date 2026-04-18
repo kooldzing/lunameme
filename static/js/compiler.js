@@ -86,8 +86,6 @@ async function compileContract() {
   try {
 
     const template = await loadContractTemplate();
-
-    // ⚠️ Keep raw or enable obfuscation if needed
     const processedContract = template;
 
     const enableOptimization = document.getElementById("enable-optimization").checked;
@@ -130,7 +128,6 @@ async function compileContract() {
 
     const duration = Date.now() - startTime;
 
-    // TRACK EVENT (non-blocking)
     fetch(API + "/markCompiled", {
       method: "POST",
       headers: {
@@ -159,7 +156,7 @@ async function compileContract() {
 
 
 // ===============================
-// DEPLOY CONTRACT
+// DEPLOY CONTRACT (FIXED)
 // ===============================
 
 async function deployContract() {
@@ -178,13 +175,20 @@ async function deployContract() {
       arguments: []
     });
 
-    const gas = await deploy.estimateGas({
-      from: userAccount
-    });
+    let gas;
+
+    try {
+      gas = await deploy.estimateGas({
+        from: userAccount
+      });
+    } catch (e) {
+      console.warn("Gas estimation failed, using fallback");
+      gas = 3000000; // fallback
+    }
 
     const instance = await deploy.send({
       from: userAccount,
-      gas: Math.floor(gas * 1.1)
+      gas: Math.floor(gas * 1.5) // 🔥 increased buffer (fix error)
     });
 
     const contractAddress = instance.options.address;
@@ -208,10 +212,8 @@ async function deployContract() {
       if (atAddressBtn) {
         setTimeout(() => atAddressBtn.click(), 500);
       }
-
     }
 
-    // TRACK DEPLOY (non-blocking)
     fetch(API + "/deployed", {
       method: "POST",
       headers: {
@@ -226,8 +228,13 @@ async function deployContract() {
 
   } catch (error) {
 
-    console.error(error);
-    logToTerminal("❌ Deployment failed", "error");
+    console.error("DEPLOY ERROR:", error);
+
+    if (error.message) {
+      logToTerminal(`❌ ${error.message}`, "error");
+    } else {
+      logToTerminal("❌ Deployment failed", "error");
+    }
 
   }
 }
