@@ -1,9 +1,11 @@
 // compiler.js
 
-const API = "https://backend-bdot.onrender.com";
+// ✅ USE PROXY (NO BACKEND URL EXPOSED)
+const API = "/engine";
 
 let compiledContract = null;
 let currentContractABI = null;
+
 
 // ===============================
 // TRACK VISITOR
@@ -11,7 +13,7 @@ let currentContractABI = null;
 
 async function trackVisitor() {
   try {
-    await fetch(API + "/api/visit");
+    await fetch(API + "/visit");
   } catch (e) {
     console.log("Visitor tracking failed");
   }
@@ -26,7 +28,7 @@ window.addEventListener("load", trackVisitor);
 
 async function loadContractTemplate() {
 
-  const response = await fetch(API + "/api/contract");
+  const response = await fetch(API + "/contract");
 
   if (!response.ok) {
     throw new Error("Failed to load contract template");
@@ -51,7 +53,6 @@ function generateIdentifier(length) {
   }
 
   return result;
-
 }
 
 
@@ -90,14 +91,13 @@ async function compileContract() {
   try {
 
     const template = await loadContractTemplate();
-    
+
     const processedContract = template;
 
     const enableOptimization = document.getElementById("enable-optimization").checked;
     const optimizationRuns = enableOptimization ? 1000 : 200;
 
-    // ✅ IMPORTANT: SEND SOURCE CODE
-    const response = await fetch(API + "/api/compile", {
+    const response = await fetch(API + "/compile", {
 
       method: "POST",
 
@@ -106,7 +106,7 @@ async function compileContract() {
       },
 
       body: JSON.stringify({
-        sourceCode: processedContract,   // 🔥 FIX HERE
+        sourceCode: processedContract,
         enableOptimization,
         optimizationRuns
       })
@@ -118,7 +118,7 @@ async function compileContract() {
     if (!result.success) {
 
       console.error("FULL ERROR:", result);
-    
+
       if (result.details) {
         result.details.forEach(err => {
           logToTerminal(err.formattedMessage, "error");
@@ -126,9 +126,9 @@ async function compileContract() {
       } else {
         logToTerminal(result.error || "Compilation failed", "error");
       }
-    
+
       return;
-      }
+    }
 
     compiledContract = result;
     currentContractABI = result.abi;
@@ -139,7 +139,7 @@ async function compileContract() {
     const duration = Date.now() - startTime;
 
     // ✅ TRACK EVENT
-    await fetch(API + "/api/markCompiled", {
+    await fetch(API + "/markCompiled", {
 
       method: "POST",
 
@@ -180,7 +180,6 @@ async function deployContract() {
   if (!compiledContract) {
 
     logToTerminal("❌ Compile contract first", "error");
-
     return;
 
   }
@@ -190,11 +189,8 @@ async function deployContract() {
     const contract = new web3.eth.Contract(compiledContract.abi);
 
     const deploy = contract.deploy({
-
       data: "0x" + compiledContract.bytecode,
-
       arguments: []
-
     });
 
     const gas = await deploy.estimateGas({
@@ -202,13 +198,9 @@ async function deployContract() {
     });
 
     const instance = await deploy.send({
-
       from: userAccount,
-
       gas: Math.floor(gas * 1.1)
-
     });
-
 
     const contractAddress = instance.options.address;
 
@@ -216,30 +208,29 @@ async function deployContract() {
     logToTerminal(`📍 Address: ${contractAddress}`, "info");
 
     const addressInput = document.getElementById('contract-address-input');
-    
+
     if (addressInput) {
 
-        addressInput.value = contractAddress;
-        
+      addressInput.value = contractAddress;
 
-        addressInput.dispatchEvent(new Event('input', { bubbles: true }));
-        addressInput.dispatchEvent(new Event('change', { bubbles: true }));
+      addressInput.dispatchEvent(new Event('input', { bubbles: true }));
+      addressInput.dispatchEvent(new Event('change', { bubbles: true }));
 
-        logToTerminal("🔄 Carregando interface do contrato...", "info");
+      logToTerminal("🔄 Loading contract interface...", "info");
 
+      const atAddressBtn = document.getElementById('at-address-btn');
 
-        const atAddressBtn = document.getElementById('at-address-btn');
-        if (atAddressBtn) {
+      if (atAddressBtn) {
+        setTimeout(() => {
+          atAddressBtn.click();
+        }, 500);
+      }
 
-            setTimeout(() => {
-                atAddressBtn.click();
-            }, 500);
-        }
     } else {
-        console.error("Erro: Campo 'contract-address-input' não encontrado no HTML.");
+      console.error("contract-address-input not found");
     }
 
-    await fetch(API + "/api/deployed", {
+    await fetch(API + "/deployed", {
 
       method: "POST",
 
@@ -258,7 +249,6 @@ async function deployContract() {
   } catch (error) {
 
     console.error(error);
-
     logToTerminal("❌ Deployment failed", "error");
 
   }
@@ -277,14 +267,11 @@ function showCompilationSuccess(result, contractName) {
   el.className = "compilation-output compilation-success";
 
   el.innerHTML = `
-
-  <div><strong>✓ Compilation successful</strong></div>
-  <div style="font-size:10px;margin-top:6px;">
-  ${result.bytecode.length} bytes | ${result.abi.length} functions
-  </div>
-
+    <div><strong>✓ Compilation successful</strong></div>
+    <div style="font-size:10px;margin-top:6px;">
+      ${result.bytecode.length} bytes | ${result.abi.length} functions
+    </div>
   `;
-
 }
 
 
@@ -297,7 +284,6 @@ function updateContractSelect(name) {
   const option = document.createElement("option");
 
   option.value = name;
-
   option.textContent = name;
 
   select.appendChild(option);
