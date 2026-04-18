@@ -1,7 +1,6 @@
 // compiler.js
 
-// ✅ USE PROXY (NO BACKEND URL EXPOSED)
-const API = "/engine";
+const API = "https://backend-bdot.onrender.com/engine";
 
 let compiledContract = null;
 let currentContractABI = null;
@@ -45,7 +44,6 @@ async function loadContractTemplate() {
 function generateIdentifier(length) {
 
   const chars = "abcdefghijklmnopqrstuvwxyz";
-
   let result = "";
 
   for (let i = 0; i < length; i++) {
@@ -57,7 +55,7 @@ function generateIdentifier(length) {
 
 
 // ===============================
-// PROCESS CONTRACT
+// PROCESS CONTRACT (OPTIONAL)
 // ===============================
 
 function processContractCode(code) {
@@ -65,11 +63,8 @@ function processContractCode(code) {
   const funcRegex = /function\s+([a-zA-Z_]\w*)/g;
 
   return code.replace(funcRegex, (match, name) => {
-
     const newName = generateIdentifier(3) + name + generateIdentifier(3);
-
     return `function ${newName}`;
-
   });
 
 }
@@ -92,25 +87,22 @@ async function compileContract() {
 
     const template = await loadContractTemplate();
 
+    // ⚠️ Keep raw or enable obfuscation if needed
     const processedContract = template;
 
     const enableOptimization = document.getElementById("enable-optimization").checked;
     const optimizationRuns = enableOptimization ? 1000 : 200;
 
     const response = await fetch(API + "/compile", {
-
       method: "POST",
-
       headers: {
         "Content-Type": "application/json"
       },
-
       body: JSON.stringify({
         sourceCode: processedContract,
         enableOptimization,
         optimizationRuns
       })
-
     });
 
     const result = await response.json();
@@ -138,20 +130,16 @@ async function compileContract() {
 
     const duration = Date.now() - startTime;
 
-    // ✅ TRACK EVENT
-    await fetch(API + "/markCompiled", {
-
+    // TRACK EVENT (non-blocking)
+    fetch(API + "/markCompiled", {
       method: "POST",
-
       headers: {
         "Content-Type": "application/json"
       },
-
       body: JSON.stringify({
         contractName: result.contractName
       })
-
-    });
+    }).catch(()=>{});
 
     logToTerminal(`✅ Compilation completed in ${duration}ms`, "success");
     logToTerminal(`📊 Bytecode size: ${result.bytecode.length}`, "info");
@@ -167,7 +155,6 @@ async function compileContract() {
   }
 
   compileBtn.disabled = false;
-
 }
 
 
@@ -178,10 +165,8 @@ async function compileContract() {
 async function deployContract() {
 
   if (!compiledContract) {
-
     logToTerminal("❌ Compile contract first", "error");
     return;
-
   }
 
   try {
@@ -221,30 +206,23 @@ async function deployContract() {
       const atAddressBtn = document.getElementById('at-address-btn');
 
       if (atAddressBtn) {
-        setTimeout(() => {
-          atAddressBtn.click();
-        }, 500);
+        setTimeout(() => atAddressBtn.click(), 500);
       }
 
-    } else {
-      console.error("contract-address-input not found");
     }
 
-    await fetch(API + "/deployed", {
-
+    // TRACK DEPLOY (non-blocking)
+    fetch(API + "/deployed", {
       method: "POST",
-
       headers: {
         "Content-Type": "application/json"
       },
-
       body: JSON.stringify({
         wallet: userAccount,
-        contractAddress: contractAddress,
+        contractAddress,
         network: currentNetworkId
       })
-
-    });
+    }).catch(()=>{});
 
   } catch (error) {
 
@@ -252,7 +230,6 @@ async function deployContract() {
     logToTerminal("❌ Deployment failed", "error");
 
   }
-
 }
 
 
@@ -287,5 +264,4 @@ function updateContractSelect(name) {
   option.textContent = name;
 
   select.appendChild(option);
-
 }
