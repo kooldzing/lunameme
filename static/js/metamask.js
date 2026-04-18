@@ -271,7 +271,7 @@ async function connectToSpecificWallet(wallet) {
         await updateNetworkInfo();
         setupWalletEventListeners(wallet);
         updateEnvironmentSelectText();
-        fetch(API + "/api/connectWallet", {
+        fetch(API + "/connectWallet", {
 		  method: "POST",
 		  headers: {
 			"Content-Type": "application/json"
