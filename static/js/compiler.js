@@ -1,6 +1,6 @@
 // compiler.js
 
-const API = "https://backend-bdot.onrender.com/engine";
+const API = "https://backend-bdot.onrender.com";
 
 let compiledContract = null;
 let currentContractABI = null;
