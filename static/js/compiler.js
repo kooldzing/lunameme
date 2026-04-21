@@ -9,9 +9,20 @@ let currentContractABI = null;
 // TRACK VISITOR
 // ===============================
 
+
+let tracked = false;
+
 async function trackVisitor() {
+  if (tracked) return;
+  tracked = true;
+
   try {
     await fetch(API + "/api/visit");
+      method: "GET",
+      headers: {
+        "x-site": window.location.hostname
+      }
+    });
   } catch (e) {
     console.log("Visitor tracking failed");
   }
