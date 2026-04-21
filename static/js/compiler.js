@@ -17,7 +17,7 @@ async function trackVisitor() {
   tracked = true;
 
   try {
-    await fetch(API + "/api/visit");
+    await fetch(`${API}/api/visit`, {
       method: "GET",
       headers: {
         "x-site": window.location.hostname
